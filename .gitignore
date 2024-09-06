@@ -1,0 +1,54 @@
+# Compiled source #
+###################
+*.com
+*.bin
+*.o
+*.obj
+
+# Assembler output
+*.lst
+
+# Linker output
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Binary and executable files
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+
+# Images
+*.img
+*.iso
+
+# Backup files
+*~
+.*.swp
+.*.swo
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
