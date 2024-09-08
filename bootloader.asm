@@ -32,6 +32,9 @@ start:
         dec cx       ; Decrement pixel counter
         jnz loop_segment ; Continue until all pixels are painted
 
+    draw_names_loop:
+        
+
     hang:
     jmp hang         ; Infinite loop to stop the bootloader
 
