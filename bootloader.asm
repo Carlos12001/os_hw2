@@ -284,11 +284,41 @@ sprite_bitmaps:
     db 1001b
     db 1111b
 
+    db 1001b    ; Letter 7 bitmap (Y)
+    db 1001b
+    db 0110b
+    db 0110b
+
+    db 1111b    ; Letter 8 bitmap (C)
+    db 1000b
+    db 1000b
+    db 1111b
+
+    db 1111b    ; Letter 9 bitmap (A)
+    db 1001b
+    db 1111b
+    db 1001b
 
 
+    db 1110b    ; Letter 10 bitmap (R)
+    db 1001b
+    db 1110b
+    db 1001b
 
+    db 1000b    ; Letter 11 bitmap (L)
+    db 1000b
+    db 1000b
+    db 1111b
 
+    db 1111b    ; Letter 12 bitmap (O)
+    db 1001b
+    db 1001b
+    db 1111b
 
+    db 1111b    ; Letter 14 bitmap (S)
+    db 1000b
+    db 1111b
+    db 1111b
 
 
 ;; Boot signature ===================================
