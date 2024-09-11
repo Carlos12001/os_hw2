@@ -7,6 +7,7 @@ sprites      equ 0FA00h
 
 ;; rotation
 rotation     equ 0
+random       equ 50
 
 
 ;; CONSTANTS =====================================
@@ -40,7 +41,8 @@ mov di, sprites
 mov si, sprite_bitmaps + rotation*NUM_LETTERS*SPRITE_SIZE_BYTE
 mov cl, NUM_LETTERS*SPRITE_SIZE_BYTE    ; Aqui solo copiamos sprites I G N A C I O   C A R L O S
 rep movsb
-
+;;inc byte [rotation]           ; Incrementa el valor de 'rotation' en 1.
+              ; Increment rotation
 
 push es
 pop ds          ; DS = ES
@@ -53,6 +55,7 @@ game_loop:
     rep stosb       ; mov [ES:DI], al cx # of times
 
     ;; ES:DI now points to AFA00h
+
     ;; Interruption keyboard ------------------------------------------------
 
 
@@ -129,13 +132,13 @@ draw_sprite:
 get_screen_position:
     mov dx, ax      ; Save Y/X values
     cbw             ; Convert byte to word - sign extend AL into AH, AH = 0 if AL < 128
+    mov ax, random
     imul di, ax, SCREEN_WIDTH*2  ; DI = Y value
     mov al, dh      ; AX = X value
     shl ax, 1       ; X value * 2
+    add ax, random
     add di, ax      ; DI = Y value + X value or X/Y position
-
     ret
-
 
 
 ;; CODE SEGMENT DATA =================================
