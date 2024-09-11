@@ -17,9 +17,10 @@ letter9      equ 0FA24h
 letter10     equ 0FA28h
 letter11     equ 0FA2Ch
 letter12     equ 0FA30h
+letter13     equ 0FA34h
 
 ;; rotation
-rotation     equ 0
+rotation     equ 3
 
 
 ;; CONSTANTS =====================================
@@ -50,7 +51,7 @@ cld             ; Clear Direction Flag to ensure SI and DI are incremented
 
 ;; Move initial sprite data into memory
 mov di, sprites
-mov si, sprite_bitmaps + rotation
+mov si, sprite_bitmaps + rotation*NUM_LETTERS*SPRITE_SIZE_BYTE
 mov cl, NUM_LETTERS*SPRITE_SIZE_BYTE    ; Aqui solo copiamos sprites I G N A C I O   C A R L O S
 rep movsb
 
@@ -154,76 +155,299 @@ get_screen_position:
 ;; 4 bits of the letter the 4 MSB are 0 by default. Because the instruction
 ;; db only defines 1 bytes not nibbles, por eso los primeros 4 bits son 0.
 sprite_bitmaps:
-    db 1111b    ; Letter 0 bitmap (I)
-    db 0110b
-    db 0110b
-    db 1111b
+    ;; Rotation 0 ------------------------------------------------
+        db 1111b    ; Letter 0 bitmap (I)
+        db 0110b
+        db 0110b
+        db 1111b
 
-    db 1111b    ; Letter 1 bitmap (G)
-    db 1000b
-    db 1111b
-    db 1111b
+        db 1111b    ; Letter 1 bitmap (G)
+        db 1000b
+        db 1111b
+        db 1111b
 
-    db 1001b    ; Letter 2 bitmap (N)
-    db 1101b
-    db 1011b
-    db 1001b
+        db 1001b    ; Letter 2 bitmap (N)
+        db 1101b
+        db 1011b
+        db 1001b
 
-    db 1111b    ; Letter 3 bitmap (A)
-    db 1001b
-    db 1111b
-    db 1001b
+        db 1111b    ; Letter 3 bitmap (A)
+        db 1001b
+        db 1111b
+        db 1001b
 
-    db 1111b    ; Letter 4 bitmap (C)
-    db 1000b
-    db 1000b
-    db 1111b
+        db 1111b    ; Letter 4 bitmap (C)
+        db 1000b
+        db 1000b
+        db 1111b
 
-    db 1111b    ; Letter 5 bitmap (I)
-    db 0110b
-    db 0110b
-    db 1111b
+        db 1111b    ; Letter 5 bitmap (I)
+        db 0110b
+        db 0110b
+        db 1111b
 
-    db 1111b    ; Letter 6 bitmap (O)
-    db 1001b
-    db 1001b
-    db 1111b
+        db 1111b    ; Letter 6 bitmap (O)
+        db 1001b
+        db 1001b
+        db 1111b
 
-    db 0000b    ; Letter 7 bitmap (Y)
-    db 0000b
-    db 0000b
-    db 0000b
+        db 0000b    ; Letter 7 bitmap ( )
+        db 0000b
+        db 0000b
+        db 0000b
 
-    db 1111b    ; Letter 8 bitmap (C)
-    db 1000b
-    db 1000b
-    db 1111b
+        db 1111b    ; Letter 8 bitmap (C)
+        db 1000b
+        db 1000b
+        db 1111b
 
-    db 1111b    ; Letter 9 bitmap (A)
-    db 1001b
-    db 1111b
-    db 1001b
+        db 1111b    ; Letter 9 bitmap (A)
+        db 1001b
+        db 1111b
+        db 1001b
 
 
-    db 1110b    ; Letter 10 bitmap (R)
-    db 1001b
-    db 1110b
-    db 1001b
+        db 1110b    ; Letter 10 bitmap (R)
+        db 1001b
+        db 1110b
+        db 1001b
 
-    db 1000b    ; Letter 11 bitmap (L)
-    db 1000b
-    db 1000b
-    db 1111b
+        db 1000b    ; Letter 11 bitmap (L)
+        db 1000b
+        db 1000b
+        db 1111b
 
-    db 1111b    ; Letter 12 bitmap (O)
-    db 1001b
-    db 1001b
-    db 1111b
+        db 1111b    ; Letter 12 bitmap (O)
+        db 1001b
+        db 1001b
+        db 1111b
 
-    db 1111b    ; Letter 14 bitmap (S)
-    db 1000b
-    db 0110b
-    db 1111b
+        db 1111b    ; Letter 13 bitmap (S)
+        db 1000b
+        db 0110b
+        db 1111b
+
+
+    ;; Rotation 90 ------------------------------------------------
+        db 1001b    ; Letter 0 bitmap (I)
+        db 1111b
+        db 1111b
+        db 1001b
+
+        db 1111b    ; Letter 1 bitmap (G)
+        db 1101b
+        db 1101b
+        db 1101b
+
+        db 1111b    ; Letter 2 bitmap (N)
+        db 0010b
+        db 0100b
+        db 1111b
+
+        db 1111b    ; Letter 3 bitmap (A)
+        db 0101b
+        db 0101b
+        db 1111b
+
+        db 1111b    ; Letter 4 bitmap (C)
+        db 1001b
+        db 1001b
+        db 1001b
+
+        db 1001b    ; Letter 5 bitmap (I)
+        db 1111b
+        db 1111b
+        db 1001b
+
+        db 1111b    ; Letter 6 bitmap (O)
+        db 1001b
+        db 1001b
+        db 1111b
+
+        db 0000b    ; Letter 7 bitmap ( )
+        db 0000b
+        db 0000b
+        db 0000b
+
+        db 1111b    ; Letter 8 bitmap (C)
+        db 1001b
+        db 1001b
+        db 1001b
+
+        db 1111b    ; Letter 9 bitmap (A)
+        db 0101b
+        db 0101b
+        db 1111b
+
+
+        db 1111b    ; Letter 10 bitmap (R)
+        db 0101b
+        db 0101b
+        db 1010b
+        
+
+        db 1111b    ; Letter 11 bitmap (L)
+        db 1000b
+        db 1000b
+        db 1000b
+
+        db 1111b    ; Letter 12 bitmap (O)
+        db 1001b
+        db 1001b
+        db 1111b
+
+        db 1011b    ; Letter 13 bitmap (S)
+        db 1101b
+        db 1001b
+        db 1001b
+
+
+    ;; Rotation 180 ------------------------------------------------
+        db 1111b    ; Letter 0 bitmap (I)
+        db 0110b
+        db 0110b
+        db 1111b
+
+        db 1111b    ; Letter 1 bitmap (G)
+        db 1111b
+        db 0001b
+        db 1111b
+
+        db 1001b    ; Letter 2 bitmap (N)
+        db 1011b
+        db 1101b
+        db 1001b    
+
+        db 1001b    ; Letter 3 bitmap (A)
+        db 1111b
+        db 1001b
+        db 1111b    
+
+        db 1111b    ; Letter 4 bitmap (C)
+        db 0001b
+        db 0001b
+        db 1111b    
+
+        db 1111b    ; Letter 5 bitmap (I)
+        db 0110b
+        db 0110b
+        db 1111b
+
+        db 1111b    ; Letter 6 bitmap (O)
+        db 1001b
+        db 1001b
+        db 1111b
+
+        db 0000b    ; Letter 7 bitmap ( )
+        db 0000b
+        db 0000b
+        db 0000b
+
+        db 1111b    ; Letter 8 bitmap (C)
+        db 0001b
+        db 0001b
+        db 1111b    
+
+        db 1001b    ; Letter 9 bitmap (A)
+        db 1111b
+        db 1001b
+        db 1111b 
+
+
+        db 1001b    ; Letter 10 bitmap (R)
+        db 0111b
+        db 1001b
+        db 1110b    
+
+        db 1111b    ; Letter 11 bitmap (L)
+        db 0001b
+        db 0001b
+        db 0001b
+
+        db 1111b    ; Letter 12 bitmap (O)
+        db 1001b
+        db 1001b
+        db 1111b
+
+        db 1111b    ; Letter 13 bitmap (S)
+        db 0110b
+        db 1000b
+        db 1111b
+
+    ;; Rotation 270 ------------------------------------------------
+        db 1001b    ; Letter 0 bitmap (I)
+        db 1111b
+        db 1111b
+        db 1001b
+
+        db 1011b    ; Letter 1 bitmap (G)
+        db 1011b
+        db 1011b
+        db 1111b
+
+        db 1111b    ; Letter 2 bitmap (N)
+        db 0100b
+        db 0010b
+        db 1111b
+
+        db 1111b    ; Letter 3 bitmap (A)
+        db 1010b
+        db 1010b
+        db 1111b
+
+        db 1001b    ; Letter 4 bitmap (C)
+        db 1001b
+        db 1001b
+        db 1111b
+
+        db 1001b    ; Letter 5 bitmap (I)
+        db 1111b
+        db 1111b
+        db 1001b
+
+        db 1111b    ; Letter 6 bitmap (O)
+        db 1001b
+        db 1001b
+        db 1111b
+
+        db 0000b    ; Letter 7 bitmap ( )
+        db 0000b
+        db 0000b
+        db 0000b
+
+        db 1001b    ; Letter 8 bitmap (C)
+        db 1001b
+        db 1001b
+        db 1111b
+
+        db 1111b    ; Letter 9 bitmap (A)
+        db 1010b
+        db 1010b
+        db 1111b
+
+
+        db 1101b    ; Letter 10 bitmap (R)
+        db 1010b
+        db 1010b
+        db 1111b
+        
+
+        db 0001b    ; Letter 11 bitmap (L)
+        db 0001b
+        db 0001b
+        db 1111b
+
+        db 1111b    ; Letter 12 bitmap (O)
+        db 1001b
+        db 1001b
+        db 1111b
+
+        db 1101b    ; Letter 13 bitmap (S)
+        db 1011b
+        db 1001b
+        db 1001b
+
+
 
 ;; Boot signature ===================================
 times 510-($-$$) db 0
