@@ -57,6 +57,55 @@ game_loop:
 
     ;; Interruption keyboard ------------------------------------------------
 
+    mov ah, 00h         ; Function 00h: Wait for a key press
+    int 16h             ; Interrupt 16h - Read keyboard
+    cmp al, 0           ; Check if it's a special key (extended keys)
+    jne not_arrow_key   ; If not 0, it's not an arrow key
+
+    ; Here we know it's an extended key (arrow, F1-F12, etc.)
+    mov ah, 00h         ; Read the next byte (scan code)
+    int 16h             ; Call interrupt 16h again
+
+    cmp ah, 48h         ; Up arrow (scan code 48h)
+    je arrow_up
+    cmp ah, 50h         ; Down arrow (scan code 50h)
+    je arrow_down
+    cmp ah, 4Bh         ; Left arrow (scan code 4Bh)
+    je arrow_left
+    cmp ah, 4Dh         ; Right arrow (scan code 4Dh)
+    je arrow_right
+
+    not_arrow_key:
+        ; Handle other keys here
+        mov ax, [memory_position]              
+        mov [memory_position], ax 
+        jmp done
+    arrow_up:
+        ; Code to handle up arrow
+        mov ax, 0               
+        mov [memory_position], ax 
+        jmp done
+
+    arrow_down:
+        ; Code to handle down arrow
+        mov ax, 2               
+        mov [memory_position], ax 
+        jmp done
+
+    arrow_left:
+        ; Code to handle left arrow
+        mov ax, 3               
+        mov [memory_position], ax 
+        jmp done
+
+    arrow_right:
+        ; Code to handle right arrow
+        mov ax, 1              
+        mov [memory_position], ax 
+        jmp done
+    done:
+
+        
 
     ;; Draw letters ------------------------------------------------
     .check_position1:
@@ -453,7 +502,7 @@ sprite_bitmaps:
 
     ;; Variable values
         dd 50           ; random
-        dd 3          ; rotation  
+        dd 0          ; rotation  
 
 
 ;; Boot signature ===================================
