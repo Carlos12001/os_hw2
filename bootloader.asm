@@ -20,7 +20,7 @@ letter12     equ 0FA30h
 letter13     equ 0FA34h
 
 ;; rotation
-rotation     equ 3
+rotation     equ 0
 
 
 ;; CONSTANTS =====================================
@@ -70,7 +70,6 @@ game_loop:
     ;; Draw letters ------------------------------------------------
     mov bl, LETTER_COLOR
     mov cl, 4
-    mov dl, byte[si+19]
 
 
     draw_next_letter:
