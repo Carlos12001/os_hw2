@@ -3,12 +3,10 @@ org 07C00h		; Set bootsector to be at memory location hex 7C00h
 
 ;; DEFINED VARIABLES AFTER SCREEN MEMORY - 320*200 = 64000 or FA00h =========================
 ;; sprites (each sprite is 4 bytes)
-sprites      equ 0FA00h
-
-;; rotation
-rotation     equ 0
-random       equ 50
-
+sprites         equ 0FA00h
+end_sprites     equ 0FAE0h
+memory_random   equ 0FAE0h
+memory_position equ 0FAE4h
 
 ;; CONSTANTS =====================================
 SCREEN_WIDTH        equ 320     ; Width in pixels
@@ -38,11 +36,9 @@ cld             ; Clear Direction Flag to ensure SI and DI are incremented
 
 ;; Move initial sprite data into memory
 mov di, sprites
-mov si, sprite_bitmaps + rotation*NUM_LETTERS*SPRITE_SIZE_BYTE
-mov cl, NUM_LETTERS*SPRITE_SIZE_BYTE    ; Aqui solo copiamos sprites I G N A C I O   C A R L O S
+mov si, sprite_bitmaps
+mov cl, NUM_LETTERS*SPRITE_SIZE_BYTE*4 + 4 + 4; Copiamos los sprites de las letras y sus 4 rotaciones por eso el *4 de NUM_LETTERS*SPRITE_SIZE_BYTE y sumamos 4 para guardar el valor de random y sumamos otros 4 para guardar rotation
 rep movsb
-;;inc byte [rotation]           ; Incrementa el valor de 'rotation' en 1.
-              ; Increment rotation
 
 push es
 pop ds          ; DS = ES
@@ -55,14 +51,30 @@ game_loop:
     rep stosb       ; mov [ES:DI], al cx # of times
 
     ;; ES:DI now points to AFA00h
+    mov bl, LETTER_COLOR
+    mov cl, 4
+
 
     ;; Interruption keyboard ------------------------------------------------
 
 
     ;; Draw letters ------------------------------------------------
-    mov bl, LETTER_COLOR
-    mov cl, 4           ;; MAGIC MOV 
+    .check_position1:
+    mov ax, 1
+    cmp ax, [memory_position]
+    jne .check_position2     ; Nope, use normal sprite  
+    add di, SPRITE_SIZE_BYTE*NUM_LETTERS
+    .check_position2:
+    mov ax, 2
+    cmp ax, [memory_position]
+    jne .check_position3    ; Nope, use normal sprite  
+    add di, 2*SPRITE_SIZE_BYTE*NUM_LETTERS
 
+    .check_position3:
+    mov ax, 3
+    cmp ax, [memory_position]
+    jne draw_next_letter    ; Nope, use normal sprite  
+    add di, 3*SPRITE_SIZE_BYTE*NUM_LETTERS
 
     draw_next_letter:
         pusha
@@ -132,11 +144,11 @@ draw_sprite:
 get_screen_position:
     mov dx, ax      ; Save Y/X values
     cbw             ; Convert byte to word - sign extend AL into AH, AH = 0 if AL < 128
-    mov ax, random
+    mov ax, [memory_random]
     imul di, ax, SCREEN_WIDTH*2  ; DI = Y value
     mov al, dh      ; AX = X value
     shl ax, 1       ; X value * 2
-    add ax, random
+    add ax, [memory_random]     ; X value + random
     add di, ax      ; DI = Y value + X value or X/Y position
     ret
 
@@ -145,6 +157,7 @@ get_screen_position:
 ;; The size of the code are 32 bits (4 bytes) although we define only the last 
 ;; 4 bits of the letter the 4 MSB are 0 by default. Because the instruction
 ;; db only defines 1 bytes not nibbles, por eso los primeros 4 bits son 0.
+
 sprite_bitmaps:
     ;; Rotation 0 ------------------------------------------------
         db 1111b    ; Letter 0 bitmap (I)
@@ -438,6 +451,9 @@ sprite_bitmaps:
         db 1001b
         db 1001b
 
+    ;; Variable values
+        dd 50           ; random
+        dd 3          ; rotation  
 
 
 ;; Boot signature ===================================
