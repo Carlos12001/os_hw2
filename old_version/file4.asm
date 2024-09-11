@@ -1,37 +1,32 @@
-use16           ; Use 16 bit (16 bit = 1 word) code only
-org 07C00h		; Set bootsector to be at memory location hex 7C00h
+use16           ; (Not needed) Use 16 bit code only
+org 07C00h		; Set bootsector to be at memory location hex 7C00h (UNCOMMENT IF USING AS BOOTSECTOR)
 
 ;; DEFINED VARIABLES AFTER SCREEN MEMORY - 320*200 = 64000 or FA00h =========================
-;; sprites (each sprite is 4 bytes)
 sprites      equ 0FA00h
-letter0      equ 0FA00h
-letter1      equ 0FA04h
-letter2      equ 0FA08h
-letter3      equ 0FA0Ch
-letter4      equ 0FA10h
-letter5      equ 0FA14h
-letter6      equ 0FA18h
-letter7      equ 0FA1Ch
-letter8      equ 0FA20h
-letter9      equ 0FA24h
-letter10     equ 0FA28h
-letter11     equ 0FA2Ch
-letter12     equ 0FA30h
+letter1      equ 0FA00h
+letter2      equ 0FA04h
+letter3      equ 0FA08h
+letter4      equ 0FA0Ch
+letter5      equ 0FA10h
+letter6      equ 0FA14h
+;letter7      equ 0FA0Ch
 
-;; rotation
-rotation     equ 0
+letterArr     equ 0FA20h  ; 2 words (1 dblword) - 32bits/letter
 
+letterY       equ 0FA2Dh ;
+letterX       equ 0FA2Eh ;
+
+changeLetter equ 0FA33h  ; Use alternate sprite yes/no
 
 ;; CONSTANTS =====================================
 SCREEN_WIDTH        equ 320     ; Width in pixels
 SCREEN_HEIGHT       equ 200     ; Height in pixels
 VIDEO_MEMORY        equ 0A000h
 TIMER               equ 046Ch   ; # of timer ticks since midnight
-SPRITE_SIZE_BYTE    equ 4       ; Size in bytes (2 words)
 SPRITE_HEIGHT       equ 4
 SPRITE_WIDTH        equ 4       ; Width in bits/data pixels
 SPRITE_WIDTH_PIXELS equ 8      ; Width in screen pixels
-NUM_LETTERS         equ 14
+
 ; Colors
 LETTER_COLOR         equ 02h   ; Green
 
@@ -50,9 +45,9 @@ cld             ; Clear Direction Flag to ensure SI and DI are incremented
 
 ;; Move initial sprite data into memory
 mov di, sprites
-mov si, sprite_bitmaps + rotation
-mov cl, NUM_LETTERS*SPRITE_SIZE_BYTE    ; Aqui solo copiamos sprites I G N A C I O   C A R L O S
-rep movsb
+mov si, sprite_bitmaps
+mov cl, 6     ; Aqui solo copiamos 3 sprites I G N
+rep movsw
 
 
 push es
@@ -67,9 +62,21 @@ game_loop:
 
     ;; ES:DI now points to AFA00h
     ;; Draw letters ------------------------------------------------
+    mov si, letterArr
     mov bl, LETTER_COLOR
+    mov ax, [si+13]       ; AL = letterY, AH = letterX
     mov cl, 4
     mov dl, byte[si+19]
+
+
+
+    ; cmp dl, 0
+    ; je draw_next_letter
+
+    ; sprite_1:
+    ;     add di, cx
+
+
 
 
     draw_next_letter:
@@ -85,13 +92,32 @@ game_loop:
 
             .next_letter:
                 popa
-                add di, SPRITE_SIZE_BYTE    ;; ESTO SI FUNCIONO PORQUE?
                 add ah, SPRITE_WIDTH+2
 
         loop .check_next_letter
 
         popa
     loop draw_next_letter
+
+
+
+    ; ;; Move letters ------------------------------------------------
+    ; move_letters:
+    ;     ;; Using BP for move_timer, Push/pop only affects SP, BP is unaffected
+    ;     mov di, letterX
+
+    ;     ;; Yes, move letters
+    ;     ;neg byte [changeLetter]     ; Toggle changeLetter byte between 1 & -1, use next sprite
+	;     mov al, byte [changeLetter]
+	;     inc al
+	;     cmp al, 7
+
+	;     jl continue
+    ;     mov al, 0
+
+	;     continue:
+	;         mov byte [changeLetter], al
+
 
 
 
@@ -189,10 +215,10 @@ sprite_bitmaps:
     db 1001b
     db 1111b
 
-    db 0000b    ; Letter 7 bitmap (Y)
-    db 0000b
-    db 0000b
-    db 0000b
+    db 1001b    ; Letter 7 bitmap (Y)
+    db 1001b
+    db 0110b
+    db 0110b
 
     db 1111b    ; Letter 8 bitmap (C)
     db 1000b
@@ -222,8 +248,9 @@ sprite_bitmaps:
 
     db 1111b    ; Letter 14 bitmap (S)
     db 1000b
-    db 0110b
     db 1111b
+    db 1111b
+
 
 ;; Boot signature ===================================
 times 510-($-$$) db 0
