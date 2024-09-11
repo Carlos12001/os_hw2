@@ -4,20 +4,6 @@ org 07C00h		; Set bootsector to be at memory location hex 7C00h
 ;; DEFINED VARIABLES AFTER SCREEN MEMORY - 320*200 = 64000 or FA00h =========================
 ;; sprites (each sprite is 4 bytes)
 sprites      equ 0FA00h
-letter0      equ 0FA00h
-letter1      equ 0FA04h
-letter2      equ 0FA08h
-letter3      equ 0FA0Ch
-letter4      equ 0FA10h
-letter5      equ 0FA14h
-letter6      equ 0FA18h
-letter7      equ 0FA1Ch
-letter8      equ 0FA20h
-letter9      equ 0FA24h
-letter10     equ 0FA28h
-letter11     equ 0FA2Ch
-letter12     equ 0FA30h
-letter13     equ 0FA34h
 
 ;; rotation
 rotation     equ 0
@@ -67,14 +53,17 @@ game_loop:
     rep stosb       ; mov [ES:DI], al cx # of times
 
     ;; ES:DI now points to AFA00h
+    ;; Interruption keyboard ------------------------------------------------
+
+
     ;; Draw letters ------------------------------------------------
     mov bl, LETTER_COLOR
-    mov cl, 4
+    mov cl, 4           ;; MAGIC MOV 
 
 
     draw_next_letter:
         pusha
-        mov cl, 14             ; # of letter to write in row
+        mov cl, NUM_LETTERS             ; # of letter to write in row
         .check_next_letter:
             pusha
             dec cx
@@ -85,7 +74,7 @@ game_loop:
 
             .next_letter:
                 popa
-                add di, SPRITE_SIZE_BYTE    ;; ESTO SI FUNCIONO PORQUE?
+                add di, SPRITE_SIZE_BYTE    ;; DI = position of sprites
                 add ah, SPRITE_WIDTH+2
 
         loop .check_next_letter
@@ -95,7 +84,7 @@ game_loop:
 
 
 
-    ;; Delay timer - 1 tick delay (1 tick = 18.2/second)
+    ;; Delay timer - 1 tick delay (1 tick = 18.2/second; 18 = 1 second)
     delay_timer:
         mov ax, [CS:TIMER]
         inc ax
